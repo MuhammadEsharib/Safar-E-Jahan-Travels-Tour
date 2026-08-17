@@ -1,0 +1,6 @@
+{
+  "name": "Safar-E-Jahan Travel & Tours",
+  "description": "Premium Umrah, Hajj, and spiritual journey travel and tour platform with curated luxury packages, custom journey planner, and dedicated booking assistance.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
