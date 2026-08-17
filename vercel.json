@@ -76,10 +76,5 @@
       "permanent": false
     }
   ],
-  "env": {
-    "RESEND_API_KEY": "@resend-api-key",
-    "WHATSAPP_TOKEN": "@whatsapp-token",
-    "WHATSAPP_PHONE_NUMBER_ID": "@whatsapp-phone-id"
-  },
   "cleanUrls": true
 }
