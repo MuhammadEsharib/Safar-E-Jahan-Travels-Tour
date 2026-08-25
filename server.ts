@@ -37,10 +37,24 @@ async function startServer() {
         bookingRef,
       } = req.body;
 
-      if (!name || (!email && !phone)) {
+      const normalizedRequestEmail = String(email || "").trim();
+      const normalizedRequestPhone = String(phone || "").trim();
+      const isValidEmail =
+        !normalizedRequestEmail ||
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedRequestEmail);
+      const isValidPhone =
+        !normalizedRequestPhone ||
+        normalizedRequestPhone.replace(/\D/g, "").length >= 7;
+
+      if (
+        !String(name || "").trim() ||
+        (!normalizedRequestEmail && !normalizedRequestPhone) ||
+        !isValidEmail ||
+        !isValidPhone
+      ) {
         return res.status(400).json({
           error:
-            "Compulsory fields missing: Full Name and at least one contact channel (Email or Phone/WhatsApp) are required.",
+            "Please provide a name and a valid email address or phone number.",
         });
       }
 
@@ -146,6 +160,7 @@ async function startServer() {
 
           if (error) {
             emailError = error.message || "Resend delivery attempted";
+            console.error("Inquiry email delivery failed:", emailError);
           } else if (data?.id) {
             emailDispatched = true;
           }
@@ -190,9 +205,11 @@ async function startServer() {
               .catch(() => ({}));
             whatsappError =
               whatsappData?.error?.message || "WhatsApp delivery attempted";
+            console.error("Inquiry WhatsApp delivery failed:", whatsappError);
           }
         } catch (e: any) {
           whatsappError = e.message;
+          console.error("Inquiry WhatsApp request failed:", whatsappError);
         }
       }
 
@@ -202,9 +219,8 @@ async function startServer() {
           bookingRef: generatedRef,
           emailDispatched: false,
           whatsappDispatched,
-          error: emailError,
-          message:
-            "Inquiry was received, but email delivery failed. Please verify the Resend sender/recipient settings.",
+          error:
+            "We couldn't deliver the confirmation right now. Please try again or contact our helpline.",
         });
       }
 
@@ -219,9 +235,8 @@ async function startServer() {
           bookingRef: generatedRef,
           emailDispatched: Boolean(emailDispatched),
           whatsappDispatched: false,
-          error: whatsappError,
-          message:
-            "Inquiry was received, but the WhatsApp message failed to send.",
+          error:
+            "We couldn't send the WhatsApp confirmation right now. Please try again or contact our helpline.",
         });
       }
 

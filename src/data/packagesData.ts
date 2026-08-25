@@ -3,13 +3,13 @@ import { PackageDetail, SanctuaryFeature } from "../types";
 export const APP_IMAGES = {
   // Primary images matching the uploaded mockups
   heroMakkah:
-    "https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=2000&q=85", // Majestic Kaaba & Haram
+    "https://cdn.pixabay.com/photo/2018/11/07/16/12/makkah-3800665_1280.jpg", // Majestic Kaaba & Haram
   madinahNight:
-    "https://images.unsplash.com/photo-1644585185180-7b51c7f302dd?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8bWVkaW5hfGVufDB8fDB8fHww", // Masjid an-Nabawi Night Minarets
+    "https://images.pexels.com/photos/21563667/pexels-photo-21563667/free-photo-of-cityscape-of-medina-with-prophets-mosque-at-night.jpeg", // Masjid an-Nabawi Night Minarets
   makkahSuiteKaaba:
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPE2h-MqPdtmRrEB-HMP8rVaYumW6WMajLVhoQgaEelwAOCZEKay7z59I&s=10", // Royal Makkah Clock Tower & Suites
+    "https://images.unsplash.com/photo-1738762051728-b83857743e77?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Royal Makkah Clock Tower & Suites
   madinahLobby:
-    "https://images.unsplash.com/photo-1572358899655-f63ece97bfa5?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWVkaW5hfGVufDB8fDB8fHww", // Luxury Grand Hotel Lobby
+    "https://media-cdn.tripadvisor.com/media/photo-s/05/e3/8a/27/hotel-lobby.jpg", // Luxury Grand Hotel Lobby
   gourmetDining:
     "https://images.unsplash.com/photo-1467003909585-2f8a72700288?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Z291cm1ldCUyMGZvb2R8ZW58MHx8MHx8fDA%3D", // Luxury Fine Dining Buffet with views
   airplaneSunset:

@@ -38,6 +38,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
           <ShimmerImage
             src={APP_IMAGES.heroMakkah}
             alt="Makkah al-Mukarramah Kaaba Golden Hour"
+            loading="eager"
+            fetchPriority="high"
             containerClassName="w-full h-full"
             className="w-full h-full object-cover object-center filter brightness-75 contrast-110"
           />

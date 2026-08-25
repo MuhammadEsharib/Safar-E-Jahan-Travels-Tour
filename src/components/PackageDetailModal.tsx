@@ -1,12 +1,28 @@
-import React, { useState } from 'react';
-import { PackageDetail } from '../types';
-import { X, Check, Clock, BedDouble, UtensilsCrossed, Car, ShieldCheck, MapPin, Calendar, Users, MessageCircle, Phone, Sparkles } from 'lucide-react';
-import { ShimmerImage } from './ShimmerImage';
-
+import React, { useRef, useState } from "react";
+import { PackageDetail } from "../types";
+import {
+  X,
+  Check,
+  Clock,
+  BedDouble,
+  UtensilsCrossed,
+  Car,
+  ShieldCheck,
+  MapPin,
+  Calendar,
+  Users,
+  MessageCircle,
+  Phone,
+  Sparkles,
+  Loader2,
+  AlertCircle,
+} from "lucide-react";
+import { ShimmerImage } from "./ShimmerImage";
+import { useFocusTrap } from "../hooks/useFocusTrap";
 
 interface PackageDetailModalProps {
   pkg: PackageDetail | null;
-  currency: 'PKR' | 'USD' | 'SAR' | 'GBP';
+  currency: "PKR" | "USD" | "SAR" | "GBP";
   onClose: () => void;
   onBookDirect: (pkg: PackageDetail, customDetails: any) => void;
 }
@@ -17,16 +33,29 @@ export const PackageDetailModal: React.FC<PackageDetailModalProps> = ({
   onClose,
   onBookDirect,
 }) => {
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  useFocusTrap(dialogRef, Boolean(pkg), onClose);
+
   if (!pkg) return null;
 
-  const [activeTab, setActiveTab] = useState<'itinerary' | 'hotels' | 'inclusions' | 'book'>('itinerary');
-  const [roomType, setRoomType] = useState<'quad' | 'triple' | 'double' | 'single'>('quad');
+  const [activeTab, setActiveTab] = useState<
+    "itinerary" | "hotels" | "inclusions" | "book"
+  >("itinerary");
+  const [roomType, setRoomType] = useState<
+    "quad" | "triple" | "double" | "single"
+  >("quad");
   const [adults, setAdults] = useState<number>(2);
   const [children, setChildren] = useState<number>(0);
-  const [departureCity, setDepartureCity] = useState<string>('Karachi');
-  const [travelMonth, setTravelMonth] = useState<string>('Upcoming Month / Ramadan');
-  const [specialNote, setSpecialNote] = useState<string>('');
+  const [departureCity, setDepartureCity] = useState<string>("Karachi");
+  const [travelMonth, setTravelMonth] = useState<string>(
+    "Upcoming Month / Ramadan",
+  );
+  const [specialNote, setSpecialNote] = useState<string>("");
   const [submitted, setSubmitted] = useState(false);
+  const [bookingState, setBookingState] = useState<
+    "idle" | "opening" | "opened" | "error"
+  >("idle");
 
   // Price calculation based on room type
   const roomMultiplier = {
@@ -39,37 +68,62 @@ export const PackageDetailModal: React.FC<PackageDetailModalProps> = ({
   const calculatePrice = () => {
     const base = pkg.priceStartingFrom.pkr * roomMultiplier;
     switch (currency) {
-      case 'USD':
+      case "USD":
         return `$${Math.round(pkg.priceStartingFrom.usd * roomMultiplier).toLocaleString()}`;
-      case 'SAR':
+      case "SAR":
         return `SAR ${Math.round(pkg.priceStartingFrom.sar * roomMultiplier).toLocaleString()}`;
-      case 'GBP':
+      case "GBP":
         return `£${Math.round(pkg.priceStartingFrom.usd * 0.79 * roomMultiplier).toLocaleString()}`;
-      case 'PKR':
+      case "PKR":
       default:
         return `PKR ${Math.round(base).toLocaleString()}`;
     }
   };
 
   const handleWhatsAppBooking = () => {
-    const text = `*New Booking Inquiry - Safar-E-Jahan*\n\n` +
+    if (bookingState === "opening") return;
+
+    const text =
+      `*New Booking Inquiry - Safar-E-Jahan*\n\n` +
       `📦 *Package:* ${pkg.name} (${pkg.duration})\n` +
       `🛏 *Room Sharing:* ${roomType.toUpperCase()}\n` +
       `👥 *Travelers:* ${adults} Adults, ${children} Children\n` +
       `📍 *Departure City:* ${departureCity}\n` +
       `📅 *Preferred Month:* ${travelMonth}\n` +
       `💰 *Estimated Rate:* ${calculatePrice()} per person\n` +
-      (specialNote ? `📝 *Notes:* ${specialNote}\n` : '') +
+      (specialNote ? `📝 *Notes:* ${specialNote}\n` : "") +
       `\nPlease provide complete availability and customized quotation.`;
 
     const encoded = encodeURIComponent(text);
-    window.open(`https://wa.me/923458050124?text=${encoded}`, '_blank');
+    setBookingState("opening");
+    const whatsappWindow = window.open(
+      `https://wa.me/923458050124?text=${encoded}`,
+      "_blank",
+      "noopener,noreferrer",
+    );
+
+    if (!whatsappWindow) {
+      setBookingState("error");
+      return;
+    }
+
     setSubmitted(true);
+    setBookingState("opened");
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md overflow-y-auto" id="package-detail-modal">
-      <div className="relative w-full max-w-4xl bg-[#121212] border border-white/15 rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md overflow-y-auto"
+      id="package-detail-modal"
+    >
+      <div
+        ref={dialogRef}
+        tabIndex={-1}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="package-detail-title"
+        className="relative w-full max-w-4xl bg-[#121212] border border-white/15 rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col"
+      >
         {/* Modal Header */}
         <div className="relative h-48 sm:h-56 w-full flex-shrink-0 bg-neutral-900">
           <ShimmerImage
@@ -80,7 +134,6 @@ export const PackageDetailModal: React.FC<PackageDetailModalProps> = ({
             className="w-full h-full object-cover filter brightness-90"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-[#121212]/60 to-transparent pointer-events-none"></div>
-
 
           {/* Close button */}
           <button
@@ -99,19 +152,28 @@ export const PackageDetailModal: React.FC<PackageDetailModalProps> = ({
                   {pkg.tag}
                 </span>
                 <span className="text-xs font-mono text-neutral-300 flex items-center gap-1">
-                  <Clock className="w-3.5 h-3.5 text-[#C5FF4A]" /> {pkg.duration}
+                  <Clock className="w-3.5 h-3.5 text-[#C5FF4A]" />{" "}
+                  {pkg.duration}
                 </span>
               </div>
-              <h2 className="font-serif-heading text-2xl sm:text-4xl font-black text-white uppercase tracking-tight">
+              <h2
+                id="package-detail-title"
+                className="font-serif-heading text-2xl sm:text-4xl font-black text-white uppercase tracking-tight"
+              >
                 {pkg.name}
               </h2>
             </div>
 
             <div className="text-left sm:text-right">
-              <div className="text-[10px] font-mono uppercase text-neutral-400">Estimated from</div>
+              <div className="text-[10px] font-mono uppercase text-neutral-400">
+                Estimated from
+              </div>
               <div className="text-xl sm:text-3xl font-black text-white font-mono">
                 {calculatePrice()}
-                <span className="text-xs text-neutral-400 font-normal"> / person</span>
+                <span className="text-xs text-neutral-400 font-normal">
+                  {" "}
+                  / person
+                </span>
               </div>
             </div>
           </div>
@@ -120,18 +182,18 @@ export const PackageDetailModal: React.FC<PackageDetailModalProps> = ({
         {/* Modal Navigation Tabs */}
         <div className="flex border-b border-white/10 bg-[#161616] px-6 text-xs font-mono font-bold uppercase tracking-wider overflow-x-auto">
           {[
-            { id: 'itinerary', label: 'Day-by-Day Itinerary' },
-            { id: 'hotels', label: 'Hotels & Transport' },
-            { id: 'inclusions', label: 'Inclusions & Exclusions' },
-            { id: 'book', label: 'Customize & Inquire' },
+            { id: "itinerary", label: "Day-by-Day Itinerary" },
+            { id: "hotels", label: "Hotels & Transport" },
+            { id: "inclusions", label: "Inclusions & Exclusions" },
+            { id: "book", label: "Customize & Inquire" },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               className={`py-3.5 px-4 border-b-2 transition-colors whitespace-nowrap ${
                 activeTab === tab.id
-                  ? 'border-[#C5FF4A] text-[#C5FF4A] bg-[#1C1C1C]'
-                  : 'border-transparent text-neutral-400 hover:text-white'
+                  ? "border-[#C5FF4A] text-[#C5FF4A] bg-[#1C1C1C]"
+                  : "border-transparent text-neutral-400 hover:text-white"
               }`}
             >
               {tab.label}
@@ -141,7 +203,7 @@ export const PackageDetailModal: React.FC<PackageDetailModalProps> = ({
 
         {/* Modal Scrollable Body */}
         <div className="p-6 sm:p-8 overflow-y-auto space-y-6 flex-1 text-[#E0E0E0]">
-          {activeTab === 'itinerary' && (
+          {activeTab === "itinerary" && (
             <div className="space-y-4">
               <div className="text-[10px] uppercase font-mono tracking-[0.3em] text-[#C5FF4A] font-bold">
                 PILGRIMAGE SCHEDULE & SPIRITUAL LANDMARKS
@@ -158,7 +220,8 @@ export const PackageDetailModal: React.FC<PackageDetailModalProps> = ({
                         Day {item.day}
                       </span>
                       <span className="text-xs font-mono text-neutral-400 flex items-center gap-1">
-                        <MapPin className="w-3 h-3 text-[#C5FF4A]" /> {item.location}
+                        <MapPin className="w-3 h-3 text-[#C5FF4A]" />{" "}
+                        {item.location}
                       </span>
                     </div>
 
@@ -175,7 +238,7 @@ export const PackageDetailModal: React.FC<PackageDetailModalProps> = ({
             </div>
           )}
 
-          {activeTab === 'hotels' && (
+          {activeTab === "hotels" && (
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Makkah Hotel Card */}
@@ -184,15 +247,26 @@ export const PackageDetailModal: React.FC<PackageDetailModalProps> = ({
                     <span className="text-[10px] font-mono uppercase tracking-wider text-[#C5FF4A] font-bold">
                       Makkah Accommodation
                     </span>
-                    <span className="text-xs font-mono text-neutral-400">{pkg.makkahNights} Nights</span>
+                    <span className="text-xs font-mono text-neutral-400">
+                      {pkg.makkahNights} Nights
+                    </span>
                   </div>
                   <h4 className="font-serif-heading text-xl font-bold text-white">
                     {pkg.makkahHotel}
                   </h4>
                   <div className="space-y-1.5 text-xs text-neutral-300">
-                    <p><strong className="text-white">Proximity:</strong> {pkg.distanceMakkah}</p>
-                    <p><strong className="text-white">Rating:</strong> {pkg.hotelRating}</p>
-                    <p><strong className="text-white">Meal Plan:</strong> {pkg.mealPlan}</p>
+                    <p>
+                      <strong className="text-white">Proximity:</strong>{" "}
+                      {pkg.distanceMakkah}
+                    </p>
+                    <p>
+                      <strong className="text-white">Rating:</strong>{" "}
+                      {pkg.hotelRating}
+                    </p>
+                    <p>
+                      <strong className="text-white">Meal Plan:</strong>{" "}
+                      {pkg.mealPlan}
+                    </p>
                   </div>
                 </div>
 
@@ -202,15 +276,26 @@ export const PackageDetailModal: React.FC<PackageDetailModalProps> = ({
                     <span className="text-[10px] font-mono uppercase tracking-wider text-white font-bold">
                       Madinah Accommodation
                     </span>
-                    <span className="text-xs font-mono text-neutral-400">{pkg.madinahNights} Nights</span>
+                    <span className="text-xs font-mono text-neutral-400">
+                      {pkg.madinahNights} Nights
+                    </span>
                   </div>
                   <h4 className="font-serif-heading text-xl font-bold text-white">
                     {pkg.madinahHotel}
                   </h4>
                   <div className="space-y-1.5 text-xs text-neutral-300">
-                    <p><strong className="text-white">Proximity:</strong> {pkg.distanceMadinah}</p>
-                    <p><strong className="text-white">Rating:</strong> {pkg.hotelRating}</p>
-                    <p><strong className="text-white">Meal Plan:</strong> {pkg.mealPlan}</p>
+                    <p>
+                      <strong className="text-white">Proximity:</strong>{" "}
+                      {pkg.distanceMadinah}
+                    </p>
+                    <p>
+                      <strong className="text-white">Rating:</strong>{" "}
+                      {pkg.hotelRating}
+                    </p>
+                    <p>
+                      <strong className="text-white">Meal Plan:</strong>{" "}
+                      {pkg.mealPlan}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -223,14 +308,17 @@ export const PackageDetailModal: React.FC<PackageDetailModalProps> = ({
                     Ground Transportation: {pkg.transportType}
                   </h4>
                   <p className="text-xs text-neutral-300 leading-relaxed font-editorial-serif italic">
-                    Includes all airport pickups, intercity travel (Jeddah → Makkah → Madinah → Airport), and guided Ziyarat tours in both Holy Cities with multilingual drivers and dedicated coordinators.
+                    Includes all airport pickups, intercity travel (Jeddah →
+                    Makkah → Madinah → Airport), and guided Ziyarat tours in
+                    both Holy Cities with multilingual drivers and dedicated
+                    coordinators.
                   </p>
                 </div>
               </div>
             </div>
           )}
 
-          {activeTab === 'inclusions' && (
+          {activeTab === "inclusions" && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Inclusions */}
               <div className="space-y-4">
@@ -239,7 +327,10 @@ export const PackageDetailModal: React.FC<PackageDetailModalProps> = ({
                 </h4>
                 <ul className="space-y-2.5">
                   {pkg.inclusions.map((inc, i) => (
-                    <li key={i} className="flex items-start gap-2.5 text-xs text-neutral-300">
+                    <li
+                      key={i}
+                      className="flex items-start gap-2.5 text-xs text-neutral-300"
+                    >
                       <span className="w-4 h-4 rounded-full bg-[#1C1C1C] border border-[#C5FF4A]/40 text-[#C5FF4A] flex items-center justify-center text-[10px] mt-0.5 flex-shrink-0">
                         ✓
                       </span>
@@ -256,7 +347,10 @@ export const PackageDetailModal: React.FC<PackageDetailModalProps> = ({
                 </h4>
                 <ul className="space-y-2.5">
                   {pkg.exclusions.map((exc, i) => (
-                    <li key={i} className="flex items-start gap-2.5 text-xs text-neutral-400">
+                    <li
+                      key={i}
+                      className="flex items-start gap-2.5 text-xs text-neutral-400"
+                    >
                       <span className="w-4 h-4 rounded-full bg-[#1C1C1C] border border-white/10 text-neutral-400 flex items-center justify-center text-[10px] mt-0.5 flex-shrink-0">
                         ✕
                       </span>
@@ -268,11 +362,15 @@ export const PackageDetailModal: React.FC<PackageDetailModalProps> = ({
             </div>
           )}
 
-          {activeTab === 'book' && (
+          {activeTab === "book" && (
             <div className="space-y-5">
               <div className="p-4 bg-[#181818] rounded-2xl border border-white/10 flex items-center justify-between text-xs font-mono">
-                <span>Selected: <strong className="text-white">{pkg.name}</strong></span>
-                <span className="text-[#C5FF4A] font-bold">{calculatePrice()} / person ({roomType.toUpperCase()})</span>
+                <span>
+                  Selected: <strong className="text-white">{pkg.name}</strong>
+                </span>
+                <span className="text-[#C5FF4A] font-bold">
+                  {calculatePrice()} / person ({roomType.toUpperCase()})
+                </span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -285,10 +383,18 @@ export const PackageDetailModal: React.FC<PackageDetailModalProps> = ({
                     onChange={(e) => setRoomType(e.target.value as any)}
                     className="w-full bg-[#181818] border border-white/15 rounded-xl p-3 text-xs text-white focus:border-[#C5FF4A] focus:outline-none"
                   >
-                    <option value="quad">Quad Sharing (4 beds / room - Standard)</option>
-                    <option value="triple">Triple Sharing (3 beds / room)</option>
-                    <option value="double">Double / Twin Sharing (2 persons / room)</option>
-                    <option value="single">Single Private Room (1 person)</option>
+                    <option value="quad">
+                      Quad Sharing (4 beds / room - Standard)
+                    </option>
+                    <option value="triple">
+                      Triple Sharing (3 beds / room)
+                    </option>
+                    <option value="double">
+                      Double / Twin Sharing (2 persons / room)
+                    </option>
+                    <option value="single">
+                      Single Private Room (1 person)
+                    </option>
                   </select>
                 </div>
 
@@ -306,7 +412,9 @@ export const PackageDetailModal: React.FC<PackageDetailModalProps> = ({
                     <option value="Islamabad">Islamabad (ISB)</option>
                     <option value="Peshawar">Peshawar (PEW)</option>
                     <option value="Multan">Multan / Sialkot</option>
-                    <option value="International (UK/USA/UAE)">International (UK / USA / Gulf)</option>
+                    <option value="International (UK/USA/UAE)">
+                      International (UK / USA / Gulf)
+                    </option>
                   </select>
                 </div>
 
@@ -354,7 +462,8 @@ export const PackageDetailModal: React.FC<PackageDetailModalProps> = ({
 
               {submitted && (
                 <div className="p-4 bg-[#181818] border border-[#C5FF4A]/50 rounded-2xl text-neutral-200 text-xs flex items-center gap-2 font-mono">
-                  <Check className="w-4 h-4 text-[#C5FF4A]" /> Inquiry initiated! Our consultant is responding via WhatsApp/phone.
+                  <Check className="w-4 h-4 text-[#C5FF4A]" /> Inquiry
+                  initiated! Our consultant is responding via WhatsApp/phone.
                 </div>
               )}
             </div>
@@ -365,17 +474,31 @@ export const PackageDetailModal: React.FC<PackageDetailModalProps> = ({
         <div className="p-5 sm:p-6 bg-[#0E0E0E] border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-xs text-neutral-400 font-mono">
             <Phone className="w-4 h-4 text-[#C5FF4A]" />
-            <span>Need immediate guidance? Call <strong className="text-white">0345-8050124</strong></span>
+            <span>
+              Need immediate guidance? Call{" "}
+              <strong className="text-white">0345-8050124</strong>
+            </span>
           </div>
 
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <button
               onClick={handleWhatsAppBooking}
-              className="flex-1 sm:flex-initial px-8 py-3.5 rounded-full font-black text-xs uppercase tracking-widest bg-white text-black hover:bg-[#C5FF4A] shadow-2xl flex items-center justify-center gap-2 transition-all transform hover:scale-105 active:scale-95"
+              disabled={bookingState === "opening"}
+              className="flex-1 sm:flex-initial px-8 py-3.5 rounded-full font-black text-xs uppercase tracking-widest bg-white text-black hover:bg-[#C5FF4A] shadow-2xl flex items-center justify-center gap-2 transition-all transform hover:scale-105 active:scale-95 disabled:opacity-70 disabled:cursor-wait"
               id="modal-whatsapp-inquire-btn"
             >
-              <MessageCircle className="w-4 h-4 fill-black text-transparent" />
-              <span>Inquire via WhatsApp</span>
+              {bookingState === "opening" ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <MessageCircle className="w-4 h-4 fill-black text-transparent" />
+              )}
+              <span>
+                {bookingState === "opening"
+                  ? "Opening WhatsApp..."
+                  : bookingState === "opened"
+                    ? "WhatsApp opened"
+                    : "Inquire via WhatsApp"}
+              </span>
             </button>
 
             <button
@@ -385,9 +508,20 @@ export const PackageDetailModal: React.FC<PackageDetailModalProps> = ({
               Close
             </button>
           </div>
+          {bookingState === "error" && (
+            <div
+              className="flex items-center gap-2 text-xs text-red-400"
+              role="alert"
+            >
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>
+                WhatsApp could not be opened. Please allow pop-ups and try
+                again.
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 };
-

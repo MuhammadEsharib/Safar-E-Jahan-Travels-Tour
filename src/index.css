@@ -1,4 +1,10 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap");
 @import "tailwindcss";
+
+:root {
+  --font-heading: "Manrope", sans-serif;
+  --font-body: "DM Sans", sans-serif;
+}
 
 @layer base {
   html {
@@ -6,59 +12,89 @@
     max-width: 100vw;
     scroll-behavior: smooth;
   }
-  
+
   body {
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background-color: #0A0A0A;
-    color: #E0E0E0;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.6;
+    background-color: #0a0a0a;
+    color: #e0e0e0;
     overflow-x: hidden;
     max-width: 100vw;
     width: 100%;
     margin: 0;
     padding: 0;
   }
-  
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+  }
+
   #root {
     overflow-x: hidden;
     max-width: 100vw;
     width: 100%;
   }
+
+  :focus-visible {
+    outline: 3px solid #c5ff4a;
+    outline-offset: 3px;
+  }
 }
 
 .font-serif-heading {
-  font-family: 'Cinzel', 'Playfair Display', Georgia, serif;
+  font-family: var(--font-heading);
 }
 
 .font-editorial-serif {
-  font-family: 'Georgia', 'Playfair Display', serif;
+  font-family: var(--font-heading);
 }
 
 .font-urdu {
-  font-family: 'Noto Nastaliq Urdu', 'Gulzar', 'Amiri', serif;
+  font-family: "Noto Nastaliq Urdu", "Gulzar", "Amiri", serif;
 }
 
 .font-cinzel {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-heading);
 }
 
 .font-playfair {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-heading);
+}
+
+/* Keep existing price and utility markup aligned with the UI type system. */
+.font-mono {
+  font-family: var(--font-body);
+  font-variant-numeric: tabular-nums;
 }
 
 /* Fluid display typography helpers */
 .heading-hero-fluid {
-  font-size: clamp(2.25rem, 6vw + 1rem, 5.5rem);
-  line-height: 1.05;
+  font-family: var(--font-heading);
+  font-size: clamp(2.25rem, 5vw, 4.75rem);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.04em;
 }
 
 .heading-sub-fluid {
-  font-size: clamp(1.35rem, 3.5vw + 0.5rem, 3rem);
-  line-height: 1.15;
+  font-family: var(--font-heading);
+  font-size: clamp(1.25rem, 2.2vw, 1.625rem);
+  font-weight: 600;
+  line-height: 1.35;
 }
 
 .heading-section-fluid {
-  font-size: clamp(1.75rem, 4vw + 0.5rem, 3.25rem);
-  line-height: 1.12;
+  font-family: var(--font-heading);
+  font-size: clamp(1.875rem, 3.5vw, 3.25rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
 }
 
 /* Artistic Flair glowing and hairline borders */
@@ -75,14 +111,14 @@
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0A0A0A;
+  background: #0a0a0a;
 }
 ::-webkit-scrollbar-thumb {
   background: #222222;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #C5FF4A;
+  background: #c5ff4a;
 }
 
 @keyframes shimmer {
@@ -98,3 +134,13 @@
   animation: shimmer 1.8s infinite linear;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -424,6 +424,7 @@ export const ContactView: React.FC = () => {
                   onSubmit={handleSubmit}
                   className="space-y-5"
                   id="contact-inquiry-form"
+                  aria-busy={isSubmitting}
                 >
                   <h2 className="font-serif-heading text-2xl sm:text-3xl font-bold text-white mb-2">
                     Send Instant Pilgrimage Inquiry
@@ -435,7 +436,11 @@ export const ContactView: React.FC = () => {
 
                   {/* Validation Error Banner */}
                   {validationError && (
-                    <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center gap-2.5 text-xs text-red-400 font-mono">
+                    <div
+                      className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center gap-2.5 text-xs text-red-400 font-mono"
+                      role="alert"
+                      aria-live="assertive"
+                    >
                       <AlertCircle className="w-4 h-4 shrink-0" />
                       <span>{validationError}</span>
                     </div>
@@ -461,10 +466,10 @@ export const ContactView: React.FC = () => {
                   </div>
 
                   {/* 2. Contact Channel Choice */}
-                  <div className="space-y-2">
-                    <label className="block text-[11px] font-mono uppercase text-neutral-300 font-bold">
+                  <fieldset className="space-y-2">
+                    <legend className="block text-[11px] font-mono uppercase text-neutral-300 font-bold">
                       Preferred Confirmation Method *
-                    </label>
+                    </legend>
                     <div className="grid grid-cols-3 gap-2">
                       {[
                         { id: "both", label: "Email & WhatsApp" },
@@ -485,7 +490,7 @@ export const ContactView: React.FC = () => {
                         </button>
                       ))}
                     </div>
-                  </div>
+                  </fieldset>
 
                   {/* Contact Fields based on selected mode */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
@@ -679,6 +684,7 @@ export const ContactView: React.FC = () => {
                     <button
                       type="submit"
                       disabled={isSubmitting}
+                      aria-busy={isSubmitting}
                       className="w-full py-3 sm:py-4 rounded-full font-black text-[12px] sm:text-xs md:text-sm uppercase tracking-widest bg-white text-black hover:bg-[#C5FF4A] shadow-2xl flex items-center justify-center gap-2 sm:gap-2.5 transition-all transform hover:scale-[1.01] active:scale-95 disabled:opacity-75 disabled:cursor-not-allowed"
                       id="submit-contact-form-btn"
                     >

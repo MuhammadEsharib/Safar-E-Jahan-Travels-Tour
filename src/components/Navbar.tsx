@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { NavScreen, PackageDetail } from "../types";
-import { Logo } from "./Logo";
+// Logo
+import logo from "../assets/logo.png";
 import {
   Phone,
   MessageCircle,
@@ -11,6 +12,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { useFocusTrap } from "../hooks/useFocusTrap";
 
 interface NavbarProps {
   currentScreen: NavScreen;
@@ -32,6 +34,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const mobileDrawerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -57,16 +60,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     };
   }, [mobileMenuOpen]);
 
-  // Handle ESC key to close mobile drawer
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setMobileMenuOpen(false);
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  useFocusTrap(mobileDrawerRef, mobileMenuOpen, () => setMobileMenuOpen(false));
 
   const navItems: { label: string; screen: NavScreen; badge?: string }[] = [
     { label: "HOME", screen: "home" },
@@ -155,7 +149,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="text-left focus:outline-none transition-transform active:scale-95 shrink-0 min-w-0"
               id="navbar-logo-btn"
             >
-              <Logo className="max-w-[220px]" />
+              <img src={logo} alt="Logo image" className="max-w-[220px]" />
             </button>
 
             {/* Center: Desktop Navigation Links (>= 1280px xl) */}
@@ -249,6 +243,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="p-2 rounded-xl text-neutral-300 hover:text-white bg-[#141414] border border-white/10 hover:border-[#C5FF4A]/50 active:scale-95 flex items-center gap-1.5 text-[10px] sm:text-xs font-mono"
                 aria-label="Toggle navigation menu"
+                aria-expanded={mobileMenuOpen}
+                aria-controls="mobile-navigation-drawer"
               >
                 {mobileMenuOpen ? (
                   <X className="w-4 h-4 sm:w-5 sm:h-5 text-[#C5FF4A]" />
@@ -273,6 +269,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="p-2 rounded-lg text-neutral-300 hover:text-white bg-[#141414] border border-white/10 active:scale-95"
                 aria-label="Toggle mobile menu"
+                aria-expanded={mobileMenuOpen}
+                aria-controls="mobile-navigation-drawer"
               >
                 {mobileMenuOpen ? (
                   <X className="w-4 h-4 text-[#C5FF4A]" />
@@ -291,6 +289,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="fixed inset-0 z-50 xl:hidden">
             {/* Backdrop */}
             <motion.div
+              ref={mobileDrawerRef}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -304,6 +303,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 28, stiffness: 300 }}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Mobile navigation"
+              id="mobile-navigation-drawer"
               className="fixed top-0 right-0 bottom-0 w-full max-w-md bg-[#0F0F0F] border-l border-white/15 p-5 sm:p-6 shadow-2xl flex flex-col justify-between overflow-y-auto z-50"
             >
               <div className="space-y-5">

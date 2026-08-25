@@ -1,10 +1,22 @@
-import React, { useState } from 'react';
-import { X, Sparkles, BedDouble, Calendar, Users, Car, Plane, CheckCircle2, MessageCircle, Phone } from 'lucide-react';
+import React, { useRef, useState } from "react";
+import {
+  X,
+  Sparkles,
+  BedDouble,
+  Calendar,
+  Users,
+  Car,
+  Plane,
+  CheckCircle2,
+  MessageCircle,
+  Phone,
+} from "lucide-react";
+import { useFocusTrap } from "../hooks/useFocusTrap";
 
 interface JourneyPlannerModalProps {
   isOpen: boolean;
   onClose: () => void;
-  currency: 'PKR' | 'USD' | 'SAR' | 'GBP';
+  currency: "PKR" | "USD" | "SAR" | "GBP";
 }
 
 export const JourneyPlannerModal: React.FC<JourneyPlannerModalProps> = ({
@@ -12,82 +24,122 @@ export const JourneyPlannerModal: React.FC<JourneyPlannerModalProps> = ({
   onClose,
   currency,
 }) => {
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  useFocusTrap(dialogRef, isOpen, onClose);
+
   if (!isOpen) return null;
 
-  const [journeyType, setJourneyType] = useState<'umrah' | 'hajj' | 'heritage'>('umrah');
+  const [journeyType, setJourneyType] = useState<"umrah" | "hajj" | "heritage">(
+    "umrah",
+  );
   const [makkahNights, setMakkahNights] = useState<number>(7);
   const [madinahNights, setMadinahNights] = useState<number>(5);
-  const [hotelTier, setHotelTier] = useState<'3star' | '4star' | '5starFrontRow'>('4star');
-  const [roomType, setRoomType] = useState<'quad' | 'triple' | 'double' | 'single'>('double');
-  const [transport, setTransport] = useState<'coach' | 'hiace' | 'gmcYukon'>('hiace');
+  const [hotelTier, setHotelTier] = useState<
+    "3star" | "4star" | "5starFrontRow"
+  >("4star");
+  const [roomType, setRoomType] = useState<
+    "quad" | "triple" | "double" | "single"
+  >("double");
+  const [transport, setTransport] = useState<"coach" | "hiace" | "gmcYukon">(
+    "hiace",
+  );
   const [adults, setAdults] = useState<number>(2);
   const [children, setChildren] = useState<number>(0);
-  const [departureCity, setDepartureCity] = useState<string>('Karachi');
-  const [travelMonth, setTravelMonth] = useState<string>('Next 30 Days');
+  const [departureCity, setDepartureCity] = useState<string>("Karachi");
+  const [travelMonth, setTravelMonth] = useState<string>("Next 30 Days");
   const [includeFlights, setIncludeFlights] = useState<boolean>(true);
   const [includeZiyarat, setIncludeZiyarat] = useState<boolean>(true);
 
   // Dynamic cost calculation algorithm
   const calculateTotalCost = () => {
     let basePerNight = 0;
-    if (hotelTier === '3star') basePerNight = 12000;
-    else if (hotelTier === '4star') basePerNight = 24000;
+    if (hotelTier === "3star") basePerNight = 12000;
+    else if (hotelTier === "4star") basePerNight = 24000;
     else basePerNight = 58000; // 5starFrontRow
 
     const totalNights = makkahNights + madinahNights;
     let roomFactor = 1.0;
-    if (roomType === 'single') roomFactor = 1.8;
-    else if (roomType === 'double') roomFactor = 1.3;
-    else if (roomType === 'triple') roomFactor = 1.1;
+    if (roomType === "single") roomFactor = 1.8;
+    else if (roomType === "double") roomFactor = 1.3;
+    else if (roomType === "triple") roomFactor = 1.1;
 
     let transportCost = 35000;
-    if (transport === 'hiace') transportCost = 75000;
-    if (transport === 'gmcYukon') transportCost = 160000;
+    if (transport === "hiace") transportCost = 75000;
+    if (transport === "gmcYukon") transportCost = 160000;
 
-    let flightCost = includeFlights ? 145000 * adults + (includeFlights ? 120000 * children : 0) : 0;
+    let flightCost = includeFlights
+      ? 145000 * adults + (includeFlights ? 120000 * children : 0)
+      : 0;
     let visaAndInsurance = 45000 * (adults + children);
     let ziyaratCost = includeZiyarat ? 15000 * (adults + children) : 0;
 
     const accommodationCost = basePerNight * totalNights * roomFactor * adults;
-    const totalPkr = accommodationCost + transportCost + flightCost + visaAndInsurance + ziyaratCost;
+    const totalPkr =
+      accommodationCost +
+      transportCost +
+      flightCost +
+      visaAndInsurance +
+      ziyaratCost;
 
     switch (currency) {
-      case 'USD':
+      case "USD":
         return `$${Math.round(totalPkr / 278).toLocaleString()}`;
-      case 'SAR':
+      case "SAR":
         return `SAR ${Math.round(totalPkr / 74).toLocaleString()}`;
-      case 'GBP':
+      case "GBP":
         return `£${Math.round(totalPkr / 355).toLocaleString()}`;
-      case 'PKR':
+      case "PKR":
       default:
         return `PKR ${Math.round(totalPkr).toLocaleString()}`;
     }
   };
 
   const handleLaunchWhatsApp = () => {
-    const hotelTierLabel = hotelTier === '3star' ? '3-Star Economy' : hotelTier === '4star' ? '4-Star Premium Walk' : '5-Star Haram Front-Row (Fairmont/Raffles/Oberoi)';
-    const transportLabel = transport === 'coach' ? 'Luxury AC Coach' : transport === 'hiace' ? 'Private HiAce Van' : 'VIP Chauffeur GMC Yukon XL';
+    const hotelTierLabel =
+      hotelTier === "3star"
+        ? "3-Star Economy"
+        : hotelTier === "4star"
+          ? "4-Star Premium Walk"
+          : "5-Star Haram Front-Row (Fairmont/Raffles/Oberoi)";
+    const transportLabel =
+      transport === "coach"
+        ? "Luxury AC Coach"
+        : transport === "hiace"
+          ? "Private HiAce Van"
+          : "VIP Chauffeur GMC Yukon XL";
 
-    const text = `*🌟 Bespoke Pilgrimage Request - Safar-E-Jahan*\n\n` +
+    const text =
+      `*🌟 Bespoke Pilgrimage Request - Safar-E-Jahan*\n\n` +
       `🕋 *Pilgrimage:* ${journeyType.toUpperCase()}\n` +
       `📅 *Duration:* ${makkahNights + madinahNights} Nights (${makkahNights}N Makkah + ${madinahNights}N Madinah)\n` +
       `🏨 *Hotel Class:* ${hotelTierLabel}\n` +
       `🛏 *Room Type:* ${roomType.toUpperCase()}\n` +
       `🚘 *Transport:* ${transportLabel}\n` +
       `👥 *Travelers:* ${adults} Adults, ${children} Children\n` +
-      `✈️ *Departure:* ${departureCity} (Flights: ${includeFlights ? 'Yes' : 'Own arrangements'})\n` +
-      `🕌 *Ziyarat Included:* ${includeZiyarat ? 'Yes' : 'No'}\n` +
+      `✈️ *Departure:* ${departureCity} (Flights: ${includeFlights ? "Yes" : "Own arrangements"})\n` +
+      `🕌 *Ziyarat Included:* ${includeZiyarat ? "Yes" : "No"}\n` +
       `🗓 *Travel Timeline:* ${travelMonth}\n` +
       `💰 *Estimated Total:* ${calculateTotalCost()}\n\n` +
       `Please provide final quotation and confirm availability.`;
 
     const encoded = encodeURIComponent(text);
-    window.open(`https://wa.me/923458050124?text=${encoded}`, '_blank');
+    window.open(`https://wa.me/923458050124?text=${encoded}`, "_blank");
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md overflow-y-auto" id="journey-planner-modal">
-      <div className="relative w-full max-w-4xl bg-[#121212] border border-white/15 rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md overflow-y-auto"
+      id="journey-planner-modal"
+    >
+      <div
+        ref={dialogRef}
+        tabIndex={-1}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="journey-planner-title"
+        className="relative w-full max-w-4xl bg-[#121212] border border-white/15 rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col"
+      >
         {/* Header */}
         <div className="p-6 sm:p-8 bg-[#181818] border-b border-white/10 flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -98,11 +150,15 @@ export const JourneyPlannerModal: React.FC<JourneyPlannerModalProps> = ({
               <div className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#C5FF4A] font-bold mb-0.5">
                 CUSTOM ITINERARY
               </div>
-              <h2 className="font-serif-heading text-xl sm:text-2xl font-bold text-white">
+              <h2
+                id="journey-planner-title"
+                className="font-serif-heading text-xl sm:text-2xl font-bold text-white"
+              >
                 Plan Your Sacred Journey
               </h2>
               <p className="text-xs font-editorial-serif italic text-neutral-300">
-                Customize nights, hotels, flights, and VIP ground transport tailored to your devotion.
+                Customize nights, hotels, flights, and VIP ground transport
+                tailored to your devotion.
               </p>
             </div>
           </div>
@@ -124,21 +180,37 @@ export const JourneyPlannerModal: React.FC<JourneyPlannerModalProps> = ({
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {[
-                { id: 'umrah', label: 'Umrah Pilgrimage', sub: 'Flexible Year-Round' },
-                { id: 'hajj', label: 'Hajj 2025/2026', sub: 'Executive VIP Maktab' },
-                { id: 'heritage', label: 'Islamic Heritage', sub: 'Taif, Badr & Holy Sites' },
+                {
+                  id: "umrah",
+                  label: "Umrah Pilgrimage",
+                  sub: "Flexible Year-Round",
+                },
+                {
+                  id: "hajj",
+                  label: "Hajj 2025/2026",
+                  sub: "Executive VIP Maktab",
+                },
+                {
+                  id: "heritage",
+                  label: "Islamic Heritage",
+                  sub: "Taif, Badr & Holy Sites",
+                },
               ].map((item) => (
                 <button
                   key={item.id}
                   onClick={() => setJourneyType(item.id as any)}
                   className={`p-4 rounded-2xl border text-left transition-all ${
                     journeyType === item.id
-                      ? 'bg-[#1C1C1C] border-[#C5FF4A] text-white shadow-lg'
-                      : 'bg-[#181818] border-white/10 text-neutral-300 hover:border-white/25'
+                      ? "bg-[#1C1C1C] border-[#C5FF4A] text-white shadow-lg"
+                      : "bg-[#181818] border-white/10 text-neutral-300 hover:border-white/25"
                   }`}
                 >
-                  <div className="text-xs sm:text-sm font-bold">{item.label}</div>
-                  <div className="text-[10px] font-mono text-neutral-400 mt-1">{item.sub}</div>
+                  <div className="text-xs sm:text-sm font-bold">
+                    {item.label}
+                  </div>
+                  <div className="text-[10px] font-mono text-neutral-400 mt-1">
+                    {item.sub}
+                  </div>
                 </button>
               ))}
             </div>
@@ -148,8 +220,12 @@ export const JourneyPlannerModal: React.FC<JourneyPlannerModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="p-5 rounded-2xl bg-[#181818] border border-white/10 space-y-3">
               <div className="flex justify-between items-center text-xs font-semibold">
-                <span className="text-white font-mono">Nights in Makkah al-Mukarramah</span>
-                <span className="text-[#C5FF4A] font-mono font-bold text-sm">{makkahNights} Nights</span>
+                <span className="text-white font-mono">
+                  Nights in Makkah al-Mukarramah
+                </span>
+                <span className="text-[#C5FF4A] font-mono font-bold text-sm">
+                  {makkahNights} Nights
+                </span>
               </div>
               <input
                 type="range"
@@ -167,8 +243,12 @@ export const JourneyPlannerModal: React.FC<JourneyPlannerModalProps> = ({
 
             <div className="p-5 rounded-2xl bg-[#181818] border border-white/10 space-y-3">
               <div className="flex justify-between items-center text-xs font-semibold">
-                <span className="text-white font-mono">Nights in Madinah al-Munawwarah</span>
-                <span className="text-white font-mono font-bold text-sm">{madinahNights} Nights</span>
+                <span className="text-white font-mono">
+                  Nights in Madinah al-Munawwarah
+                </span>
+                <span className="text-white font-mono font-bold text-sm">
+                  {madinahNights} Nights
+                </span>
               </div>
               <input
                 type="range"
@@ -192,24 +272,40 @@ export const JourneyPlannerModal: React.FC<JourneyPlannerModalProps> = ({
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {[
-                { id: '3star', title: '3-Star Economy', desc: '500-800m with shuttle service' },
-                { id: '4star', title: '4-Star Premium', desc: '100-250m direct walking to Haram' },
-                { id: '5starFrontRow', title: '5-Star Front Row', desc: 'Clock Tower / Fairmont / Oberoi / Raffles' },
+                {
+                  id: "3star",
+                  title: "3-Star Economy",
+                  desc: "500-800m with shuttle service",
+                },
+                {
+                  id: "4star",
+                  title: "4-Star Premium",
+                  desc: "100-250m direct walking to Haram",
+                },
+                {
+                  id: "5starFrontRow",
+                  title: "5-Star Front Row",
+                  desc: "Clock Tower / Fairmont / Oberoi / Raffles",
+                },
               ].map((tier) => (
                 <button
                   key={tier.id}
                   onClick={() => setHotelTier(tier.id as any)}
                   className={`p-4 rounded-2xl border text-left transition-all ${
                     hotelTier === tier.id
-                      ? 'bg-[#1C1C1C] border-[#C5FF4A] text-white shadow-lg'
-                      : 'bg-[#181818] border-white/10 text-neutral-300 hover:border-white/25'
+                      ? "bg-[#1C1C1C] border-[#C5FF4A] text-white shadow-lg"
+                      : "bg-[#181818] border-white/10 text-neutral-300 hover:border-white/25"
                   }`}
                 >
                   <div className="text-xs sm:text-sm font-bold flex items-center justify-between">
                     <span>{tier.title}</span>
-                    {hotelTier === tier.id && <CheckCircle2 className="w-4 h-4 text-[#C5FF4A]" />}
+                    {hotelTier === tier.id && (
+                      <CheckCircle2 className="w-4 h-4 text-[#C5FF4A]" />
+                    )}
                   </div>
-                  <div className="text-[11px] font-editorial-serif italic text-neutral-400 mt-1">{tier.desc}</div>
+                  <div className="text-[11px] font-editorial-serif italic text-neutral-400 mt-1">
+                    {tier.desc}
+                  </div>
                 </button>
               ))}
             </div>
@@ -226,9 +322,15 @@ export const JourneyPlannerModal: React.FC<JourneyPlannerModalProps> = ({
                 onChange={(e) => setTransport(e.target.value as any)}
                 className="w-full bg-[#181818] border border-white/15 rounded-xl p-3 text-xs text-white focus:border-[#C5FF4A] focus:outline-none"
               >
-                <option value="coach">Air-Conditioned Luxury Bus (Standard)</option>
-                <option value="hiace">Private Toyota HiAce Grand Cabin Van</option>
-                <option value="gmcYukon">VIP Chauffeur GMC Yukon XL (Royal Fleet)</option>
+                <option value="coach">
+                  Air-Conditioned Luxury Bus (Standard)
+                </option>
+                <option value="hiace">
+                  Private Toyota HiAce Grand Cabin Van
+                </option>
+                <option value="gmcYukon">
+                  VIP Chauffeur GMC Yukon XL (Royal Fleet)
+                </option>
               </select>
             </div>
 
@@ -242,7 +344,9 @@ export const JourneyPlannerModal: React.FC<JourneyPlannerModalProps> = ({
                 className="w-full bg-[#181818] border border-white/15 rounded-xl p-3 text-xs text-white focus:border-[#C5FF4A] focus:outline-none"
               >
                 <option value="quad">Quad Sharing (4 Persons / Room)</option>
-                <option value="triple">Triple Sharing (3 Persons / Room)</option>
+                <option value="triple">
+                  Triple Sharing (3 Persons / Room)
+                </option>
                 <option value="double">Double / Twin Room (2 Persons)</option>
                 <option value="single">Single Private Room</option>
               </select>
@@ -309,10 +413,14 @@ export const JourneyPlannerModal: React.FC<JourneyPlannerModalProps> = ({
         {/* Modal Price Footer and WhatsApp Trigger */}
         <div className="p-6 bg-[#0E0E0E] border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
-            <span className="text-[10px] text-neutral-400 uppercase tracking-[0.2em] font-mono block">Estimated Quote ({currency})</span>
+            <span className="text-[10px] text-neutral-400 uppercase tracking-[0.2em] font-mono block">
+              Estimated Quote ({currency})
+            </span>
             <div className="text-2xl sm:text-3xl font-black text-white font-mono flex items-baseline gap-2 mt-0.5">
               {calculateTotalCost()}
-              <span className="text-xs text-neutral-400 font-normal">for {adults} adult(s)</span>
+              <span className="text-xs text-neutral-400 font-normal">
+                for {adults} adult(s)
+              </span>
             </div>
           </div>
 
@@ -338,4 +446,3 @@ export const JourneyPlannerModal: React.FC<JourneyPlannerModalProps> = ({
     </div>
   );
 };
-

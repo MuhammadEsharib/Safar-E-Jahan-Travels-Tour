@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavScreen } from '../types';
-import { Logo } from './Logo';
+import logo from "../assets/logo.png";
 import { Phone, Mail, MapPin, MessageCircle, ShieldCheck, ArrowUpRight } from 'lucide-react';
 
 interface FooterProps {
@@ -55,7 +55,7 @@ export const Footer: React.FC<FooterProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-16 border-b border-white/10">
           {/* Brand Col */}
           <div className="lg:col-span-2 space-y-5">
-            <Logo />
+            <img src={logo} />
             <p className="text-xs sm:text-sm font-editorial-serif italic text-neutral-400 leading-relaxed max-w-sm">
               Crafting spiritually enriching, meticulously planned, and premium travel experiences for pilgrims worldwide. Dedicated to sacred hospitality.
             </p>

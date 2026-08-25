@@ -2,6 +2,7 @@ import React from "react";
 import { PackageDetail } from "../types";
 import { PACKAGES_DATA, APP_IMAGES } from "../data/packagesData";
 import { PackageCard } from "../components/PackageCard";
+import { ShimmerImage } from "../components/ShimmerImage";
 
 interface HajjViewProps {
   onSelectPackage: (pkg: PackageDetail) => void;
@@ -49,11 +50,13 @@ export const HajjView: React.FC<HajjViewProps> = ({
       {/* Hero */}
       <section className="relative min-h-[80vh] flex items-center justify-center pt-28 sm:pt-32 pb-16 sm:pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden w-full">
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-          <img
+          <ShimmerImage
             src={APP_IMAGES.heroMakkah}
-            alt="Hajj Pilgrimage Kaaba"
+            alt="Kaaba at the Grand Mosque in Makkah during Hajj"
+            loading="eager"
+            fetchPriority="high"
+            containerClassName="w-full h-full"
             className="w-full h-full object-cover filter brightness-70"
-            referrerPolicy="no-referrer"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/60 to-black/80"></div>
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,var(--tw-gradient-stops))] from-transparent via-[#0A0A0A]/40 to-[#0A0A0A]/90"></div>

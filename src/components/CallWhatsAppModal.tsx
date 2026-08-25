@@ -1,22 +1,50 @@
-import React from 'react';
-import { X, Phone, MessageCircle, Mail, MapPin, Clock, ShieldCheck } from 'lucide-react';
+import React, { useRef } from "react";
+import {
+  X,
+  Phone,
+  MessageCircle,
+  Mail,
+  MapPin,
+  Clock,
+  ShieldCheck,
+} from "lucide-react";
+import { useFocusTrap } from "../hooks/useFocusTrap";
 
 interface CallWhatsAppModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const CallWhatsAppModal: React.FC<CallWhatsAppModalProps> = ({ isOpen, onClose }) => {
+export const CallWhatsAppModal: React.FC<CallWhatsAppModalProps> = ({
+  isOpen,
+  onClose,
+}) => {
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  useFocusTrap(dialogRef, isOpen, onClose);
+
   if (!isOpen) return null;
 
   const handleWhatsAppDirect = () => {
-    const text = encodeURIComponent("Assalam-o-Alaikum, I would like to inquire about your Umrah / Hajj packages and customized travel services.");
-    window.open(`https://wa.me/923458050124?text=${text}`, '_blank');
+    const text = encodeURIComponent(
+      "Assalam-o-Alaikum, I would like to inquire about your Umrah / Hajj packages and customized travel services.",
+    );
+    window.open(`https://wa.me/923458050124?text=${text}`, "_blank");
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md" id="contact-quick-modal">
-      <div className="relative w-full max-w-lg bg-[#121212] border border-white/15 rounded-3xl shadow-2xl p-6 sm:p-8 space-y-6 animate-in fade-in zoom-in-95">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md"
+      id="contact-quick-modal"
+    >
+      <div
+        ref={dialogRef}
+        tabIndex={-1}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="contact-quick-modal-title"
+        className="relative w-full max-w-lg bg-[#121212] border border-white/15 rounded-3xl shadow-2xl p-6 sm:p-8 space-y-6 animate-in fade-in zoom-in-95"
+      >
         <button
           onClick={onClose}
           className="absolute top-5 right-5 p-2.5 rounded-full bg-[#1C1C1C] text-neutral-300 hover:text-white hover:border-[#C5FF4A] border border-white/10 transition-colors"
@@ -31,11 +59,15 @@ export const CallWhatsAppModal: React.FC<CallWhatsAppModalProps> = ({ isOpen, on
           <div className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#C5FF4A] font-bold">
             24/7 DEDICATED CONCIERGE
           </div>
-          <h3 className="font-serif-heading text-2xl sm:text-3xl font-bold text-white">
+          <h2
+            id="contact-quick-modal-title"
+            className="font-serif-heading text-2xl sm:text-3xl font-bold text-white"
+          >
             Connect with Our Advisors
-          </h3>
+          </h2>
           <p className="text-xs sm:text-sm font-editorial-serif italic text-neutral-300">
-            Available 24/7 for Umrah, Hajj, visa inquiries, and VIP hotel bookings.
+            Available 24/7 for Umrah, Hajj, visa inquiries, and VIP hotel
+            bookings.
           </p>
         </div>
 
@@ -64,26 +96,36 @@ export const CallWhatsAppModal: React.FC<CallWhatsAppModalProps> = ({ isOpen, on
         <div className="pt-4 border-t border-white/10 space-y-3 text-xs text-neutral-300 font-mono">
           <div className="flex items-center gap-3">
             <Clock className="w-4 h-4 text-[#C5FF4A] flex-shrink-0" />
-            <span><strong className="text-white">Advisory:</strong> 24/7 Ground Support & Active Helpline</span>
+            <span>
+              <strong className="text-white">Advisory:</strong> 24/7 Ground
+              Support & Active Helpline
+            </span>
           </div>
 
           <div className="flex items-center gap-3">
             <Mail className="w-4 h-4 text-[#C5FF4A] flex-shrink-0" />
-            <span><strong className="text-white">Email:</strong> info@safarejahan.com</span>
+            <span>
+              <strong className="text-white">Email:</strong>{" "}
+              info@safarejahan.com
+            </span>
           </div>
 
           <div className="flex items-start gap-3">
             <MapPin className="w-4 h-4 text-[#C5FF4A] flex-shrink-0 mt-0.5" />
-            <span><strong className="text-white">Offices:</strong> Karachi • Lahore • Islamabad • Makkah Branch (Ajyad)</span>
+            <span>
+              <strong className="text-white">Offices:</strong> Karachi • Lahore
+              • Islamabad • Makkah Branch (Ajyad)
+            </span>
           </div>
         </div>
 
         <div className="p-3.5 rounded-2xl bg-[#181818] border border-white/10 flex items-center gap-3 text-xs text-neutral-400 font-mono">
           <ShieldCheck className="w-4 h-4 text-[#C5FF4A] flex-shrink-0" />
-          <span>Licensed and authorized by Ministry of Hajj and Umrah (KSA).</span>
+          <span>
+            Licensed and authorized by Ministry of Hajj and Umrah (KSA).
+          </span>
         </div>
       </div>
     </div>
   );
 };
-

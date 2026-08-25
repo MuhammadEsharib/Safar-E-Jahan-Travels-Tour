@@ -1,39 +1,52 @@
-import React from 'react';
-import { Logo } from '../components/Logo';
-import { APP_IMAGES } from '../data/packagesData';
-import { AnimatedTrustStats } from '../components/AnimatedTrustStats';
-import { Testimonials } from '../components/Testimonials';
-import { ShieldCheck, Award, HeartHandshake, Users, Sparkles, CheckCircle2, Phone } from 'lucide-react';
-import { ShimmerImage } from '../components/ShimmerImage';
-
+import React from "react";
+import logo from "../assets/logo.png";
+import { APP_IMAGES } from "../data/packagesData";
+import { AnimatedTrustStats } from "../components/AnimatedTrustStats";
+import { Testimonials } from "../components/Testimonials";
+import {
+  ShieldCheck,
+  Award,
+  HeartHandshake,
+  Users,
+  Sparkles,
+  CheckCircle2,
+  Phone,
+} from "lucide-react";
+import { ShimmerImage } from "../components/ShimmerImage";
 
 interface AboutViewProps {
   onOpenPlanner: () => void;
   onOpenContact: () => void;
 }
 
-export const AboutView: React.FC<AboutViewProps> = ({ onOpenPlanner, onOpenContact }) => {
+export const AboutView: React.FC<AboutViewProps> = ({
+  onOpenPlanner,
+  onOpenContact,
+}) => {
   const values = [
     {
-      title: 'Spiritual Sacred Integrity',
-      desc: 'We treat every pilgrim as a guest of Allah (Duyuf al-Rahman), ensuring complete adherence to Sunnah and honesty in all dealings.'
+      title: "Spiritual Sacred Integrity",
+      desc: "We treat every pilgrim as a guest of Allah (Duyuf al-Rahman), ensuring complete adherence to Sunnah and honesty in all dealings.",
     },
     {
-      title: 'Precision Attention to Detail',
-      desc: 'From airport fast-track reception to direct elevator access into the Haram, we eliminate logistical friction so your heart remains focused.'
+      title: "Precision Attention to Detail",
+      desc: "From airport fast-track reception to direct elevator access into the Haram, we eliminate logistical friction so your heart remains focused.",
     },
     {
-      title: 'Transparent Pricing & Ethics',
-      desc: 'Zero hidden charges. Guaranteed confirmed hotel vouchers, transparent room categories, and verified flight itineraries.'
+      title: "Transparent Pricing & Ethics",
+      desc: "Zero hidden charges. Guaranteed confirmed hotel vouchers, transparent room categories, and verified flight itineraries.",
     },
     {
-      title: 'Continuous 24/7 On-Ground Support',
-      desc: 'Multilingual field coordinators stationed permanently in Makkah and Madinah to assist with medical, logistics, and Nusuk permit needs.'
-    }
+      title: "Continuous 24/7 On-Ground Support",
+      desc: "Multilingual field coordinators stationed permanently in Makkah and Madinah to assist with medical, logistics, and Nusuk permit needs.",
+    },
   ];
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] pt-32 pb-24 text-[#E0E0E0]" id="about-view">
+    <div
+      className="min-h-screen bg-[#0A0A0A] pt-32 pb-24 text-[#E0E0E0]"
+      id="about-view"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
         {/* Intro */}
         <div className="text-center max-w-3xl mx-auto space-y-5">
@@ -48,7 +61,9 @@ export const AboutView: React.FC<AboutViewProps> = ({ onOpenPlanner, onOpenConta
             آؤ سفر کریں جہاں کا
           </p>
           <p className="text-sm sm:text-base font-editorial-serif italic text-neutral-300 leading-relaxed max-w-2xl mx-auto">
-            Founded with a solemn mission: to provide the highest echelon of hospitality, precision planning, and tranquility for the sacred pilgrimages of Umrah and Hajj.
+            Founded with a solemn mission: to provide the highest echelon of
+            hospitality, precision planning, and tranquility for the sacred
+            pilgrimages of Umrah and Hajj.
           </p>
         </div>
 
@@ -67,10 +82,17 @@ export const AboutView: React.FC<AboutViewProps> = ({ onOpenPlanner, onOpenConta
               Serving the Guests of the Almighty with Reverence
             </h2>
             <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed font-normal">
-              At Safar-E-Jahan Travel and Tours, we recognize that a pilgrimage to the Holy Sanctuaries of Makkah al-Mukarramah and Madinah al-Munawwarah is not a conventional vacation—it is the culmination of years of longing, prayer, and devotion.
+              At Safar-E-Jahan Travel and Tours, we recognize that a pilgrimage
+              to the Holy Sanctuaries of Makkah al-Mukarramah and Madinah
+              al-Munawwarah is not a conventional vacation—it is the culmination
+              of years of longing, prayer, and devotion.
             </p>
             <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed font-normal">
-              Our team combines deep spiritual sensitivity with rigorous modern operational logistics. With direct accreditations from the Ministry of Hajj and Umrah (KSA), IATA certification, and premier hospitality partnerships, we ensure every moment of your pilgrimage is seamless and serene.
+              Our team combines deep spiritual sensitivity with rigorous modern
+              operational logistics. With direct accreditations from the
+              Ministry of Hajj and Umrah (KSA), IATA certification, and premier
+              hospitality partnerships, we ensure every moment of your
+              pilgrimage is seamless and serene.
             </p>
           </div>
 
@@ -95,12 +117,17 @@ export const AboutView: React.FC<AboutViewProps> = ({ onOpenPlanner, onOpenConta
             <h2 className="font-serif-heading text-3xl sm:text-4xl font-black text-white uppercase">
               Our Guiding Principles
             </h2>
-            <p className="text-xs sm:text-sm text-neutral-400 font-editorial-serif italic mt-1">Built on trust, honor, and uncompromising excellence.</p>
+            <p className="text-xs sm:text-sm text-neutral-400 font-editorial-serif italic mt-1">
+              Built on trust, honor, and uncompromising excellence.
+            </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {values.map((v, i) => (
-              <div key={i} className="p-7 rounded-3xl bg-[#121212] border border-white/10 space-y-4 hover:border-[#C5FF4A]/50 transition-colors">
+              <div
+                key={i}
+                className="p-7 rounded-3xl bg-[#121212] border border-white/10 space-y-4 hover:border-[#C5FF4A]/50 transition-colors"
+              >
                 <div className="w-8 h-8 rounded-full bg-[#1C1C1C] border border-[#C5FF4A]/40 text-[#C5FF4A] flex items-center justify-center font-mono font-bold text-xs">
                   0{i + 1}
                 </div>
@@ -122,12 +149,15 @@ export const AboutView: React.FC<AboutViewProps> = ({ onOpenPlanner, onOpenConta
 
         {/* CTA */}
         <div className="p-10 rounded-3xl bg-[#121212] border border-white/10 text-center space-y-5 shadow-2xl">
-          <div className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#C5FF4A] font-bold">START YOUR SACRED JOURNEY</div>
+          <div className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#C5FF4A] font-bold">
+            START YOUR SACRED JOURNEY
+          </div>
           <h3 className="font-serif-heading text-2xl sm:text-4xl font-black text-white uppercase">
             Let Us Craft Your Pilgrimage Experience
           </h3>
           <p className="text-xs sm:text-sm text-neutral-300 max-w-xl mx-auto font-editorial-serif italic">
-            Speak directly with our dedicated travel counselors to design an itinerary tailored to your dates and family preferences.
+            Speak directly with our dedicated travel counselors to design an
+            itinerary tailored to your dates and family preferences.
           </p>
           <div className="flex flex-wrap justify-center gap-4 pt-2">
             <button
@@ -148,5 +178,3 @@ export const AboutView: React.FC<AboutViewProps> = ({ onOpenPlanner, onOpenConta
     </div>
   );
 };
-
-
